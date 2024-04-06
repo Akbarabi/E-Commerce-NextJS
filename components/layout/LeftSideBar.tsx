@@ -24,7 +24,7 @@ const LeftSideBar = () => {
           >
             {link.icon} <p>{link.label}</p>
           </Link>
-        ))}
+        ))} 
       </div>
 
       <div className="flex gap-4 text-body-medium items-center">
