@@ -21,8 +21,8 @@ import { Textarea } from "../ui/textarea";
 import ImageUpload from "../custom ui/ImageUpload";
 import { useState } from "react";
 import toast from "react-hot-toast";
-
-// import Delete from "../custom ui/Delete";
+import { CollectionType } from "@/lib/type";
+import Delete from "../custom ui/Delete";
 
 const formSchema = z.object({
   title: z.string().min(2).max(20),
@@ -30,48 +30,54 @@ const formSchema = z.object({
   image: z.string(),
 });
 
-const CollectionForm = () => {
+interface CollectionFormData {
+  initialData?: CollectionType | null;  /**Must have question mark to make it optional */
+}
+
+const CollectionForm = ({ initialData }: CollectionFormData) => {
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false)
 
-
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues:
-        {
-          title: "",
-          description: "",
-          image: "",
-        },
+    defaultValues: initialData ? initialData :
+      {
+        title: "",
+        description: "",
+        image: "",
+      },
   });
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-    }
-  }
   
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setLoading(true)
-      const res = await axios.post("/api/collections", values);
-      
-      if(res.status === 200){
-        setLoading(false)
-        toast.success("Collection successfuly created")
-        router.push('/collections')
+      setLoading(true);
+      const url = initialData ? `/api/collections/${initialData._id}` : "/api/collections";
+      const res = await axios.post(url, values);
+      if (res.status === 200) {
+        setLoading(false);
+        toast.success(`Collection ${initialData ? "updated" : "created"}`);
+        window.location.href = "/collections";
+        router.push("/collections");
       }
-    } catch (error) {
-      console.log("[Collection_POST]",error);
-      toast.error('Collection failed to created!, Please try again')
+    } catch (err) {
+      console.log("[collections_POST]", err);
+      toast.error("Something went wrong! Please try again.");
     }
   };
 
   return (
     <div className="pt-10 pr-10">
-      <p className="text-lg text">Create Collection</p>
+      {initialData ? (
+        <div className="flex items-center justify-between">
+          <p className="text-heading2-bold">Edit Collection</p>
+          <Delete id={initialData._id} />
+        </div>
+      ) : (
+        <p className="text-heading2-bold">Create Collection</p>
+      )}
       <Separator className="bg-gray-500 mt-4 mb-7" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -82,7 +88,7 @@ const CollectionForm = () => {
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="Title" {...field} onKeyDown={handleKeyPress} />
+                  <Input placeholder="Title" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -95,7 +101,7 @@ const CollectionForm = () => {
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Description" {...field} rows={5} onKeyDown={handleKeyPress} />
+                  <Textarea placeholder="Description" {...field} rows={5} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
