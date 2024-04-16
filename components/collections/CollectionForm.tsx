@@ -21,7 +21,6 @@ import { Textarea } from "../ui/textarea";
 import ImageUpload from "../custom ui/ImageUpload";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { CollectionType } from "@/lib/type";
 import Delete from "../custom ui/Delete";
 
 const formSchema = z.object({
@@ -77,7 +76,7 @@ const CollectionForm = ({ initialData }: CollectionFormData) => {
       {initialData ? (
         <div className="flex items-center justify-between">
           <p className="text-heading2-bold">Edit Collection</p>
-          <Delete id={initialData._id} />
+          <Delete id={initialData._id} item="collection"/>
         </div>
       ) : (
         <p className="text-heading2-bold">Create Collection</p>

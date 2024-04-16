@@ -1,23 +1,21 @@
-import { PreinitModuleOptions } from "react-dom"
-
 type CollectionType = {
-    _id: string
-    title: string
-    description: string
-    image: string
+    _id: string;
+    title: string;
+    description: string;
+    image: string;
+    products: ProductType[];
 }
 
 type ProductType = {
-    _id : string
-    title: string
-    description: string
-    media: [string]
-    category: string
-    collections:string
-    qty: number
-    tags: [string]
-    price: number
-    updateAt : Date
-    createdAt : Date
+    _id: string;
+    title: string;
+    description: string;
+    media: [string];
+    category: string;
+    collections: [CollectionType];
+    tags: [string];
+    price: number;
+    qty: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
-
