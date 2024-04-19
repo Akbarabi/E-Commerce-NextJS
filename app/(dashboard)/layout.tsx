@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import "../globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import LeftSideBar from "@/components/layout/LeftSideBar";
+import TopBar from "@/components/layout/TopBar";
 import { ToastProvider } from "@/lib/ToastProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Product",
-  description: "Monsell product",
+  title: "Borcelle - Admin Dashboard",
+  description: "Admin dashboard to manage Borcelle's data",
 };
 
 export default function RootLayout({
@@ -17,14 +20,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
           <ToastProvider />
-          <div className="flex max-lg:flex-col text-grey-1">
+          <div className="flex max-lg:flex-col text-gray-600">
             <LeftSideBar />
-            <div className="flex-1 px-10">{children}</div>
+            <TopBar />
+            <div className="flex-1">{children}</div>
           </div>
         </body>
       </html>
+    </ClerkProvider>
   );
 }

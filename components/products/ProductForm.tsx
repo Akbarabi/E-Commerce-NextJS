@@ -22,9 +22,8 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Delete from "../custom ui/Delete";
 import MultiText from "../custom ui/MultiText";
-import MultiSelect from "../custom ui/MutlSelect";
+import MultiSelect from "../custom ui/MultiSelect";
 import Loader from "../custom ui/Loader";
-import axios from "axios";
 
 const formSchema = z.object({
   title: z.string().min(2).max(20),
@@ -49,8 +48,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
 
   const getCollections = async () => {
     try {
-      const res = await axios.get("/api/collections");
-      setCollections(res.data);
+      const res = await fetch("/api/collections", {
+        method: "GET",
+      });
+      const data = await res.json();
+      setCollections(data);
       setLoading(false);
     } catch (err) {
       console.log("[collections_GET]", err);
@@ -99,8 +101,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
       const url = initialData
         ? `/api/products/${initialData._id}`
         : "/api/products";
-        const res = await axios.post(url, values)
-      if (res.status === 200) {
+      const res = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+      if (res.ok) {
         setLoading(false);
         toast.success(`Product ${initialData ? "updated" : "created"}`);
         window.location.href = "/products";
@@ -140,11 +145,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                     onKeyDown={handleKeyPress}
                   />
                 </FormControl>
-                <FormMessage className="text-red-1" />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="description"
@@ -159,11 +163,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                     onKeyDown={handleKeyPress}
                   />
                 </FormControl>
-                <FormMessage className="text-red-1" />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="media"
@@ -181,7 +184,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                     }
                   />
                 </FormControl>
-                <FormMessage className="text-red-1" />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
@@ -201,7 +204,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-1" />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -219,7 +222,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-1" />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -236,7 +239,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                       onKeyDown={handleKeyPress}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-1" />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -262,47 +265,45 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                 </FormItem>
               )}
             />
-            
-            { collections.length > 0 && (
+            {collections.length > 0 && (
               <FormField
-              control={form.control}
-              name="collections"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Collections</FormLabel>
-                  <FormControl>
-                    <MultiSelect
-                      placeholder="Collections"
-                      collections={collections}
-                      value={field.value}
-                      onChange={(_id) =>
-                        field.onChange([...field.value, _id])
-                      }
-                      onRemove={(idToRemove) =>
-                        field.onChange([
-                          ...field.value.filter(
-                            (collectionId) => collectionId !== idToRemove
-                          ),
-                        ])
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-1" />
-                </FormItem>
-              )}
-            />
+                control={form.control}
+                name="collections"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Collections</FormLabel>
+                    <FormControl>
+                      <MultiSelect
+                        placeholder="Collections"
+                        collections={collections}
+                        value={field.value}
+                        onChange={(_id) =>
+                          field.onChange([...field.value, _id])
+                        }
+                        onRemove={(idToRemove) =>
+                          field.onChange([
+                            ...field.value.filter(
+                              (collectionId) => collectionId !== idToRemove
+                            ),
+                          ])
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-500" />
+                  </FormItem>
+                )}
+              />
             )}
-
           </div>
 
-          <div className="flex gap-5">
-            <Button type="submit" className="bg-blue-400 text-white">
+          <div className="flex gap-10">
+            <Button type="submit" className="bg-blue-500 text-white">
               Submit
             </Button>
             <Button
               type="button"
               onClick={() => router.push("/products")}
-              className="bg-blue-400 text-white"
+              className="bg-red-500 text-white"
             >
               Discard
             </Button>

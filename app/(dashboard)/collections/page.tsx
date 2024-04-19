@@ -20,7 +20,8 @@ const Collections = () => {
   const getCollections = async () => {
     try {
       const res = await axios.get("/api/collections")
-      setCollections(res.data)
+      const data = await res.data
+      setCollections(data)
       setLoading(false)
 
     } catch (err) {
