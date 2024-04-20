@@ -37,16 +37,16 @@ const Products = () => {
   ) : (
     <div className="px-10 py-5">
       <div className="flex items-center justify-between">
-        <p className="text-heading2-bold">Products</p>
+        <p className="text-2xl font-bold">Products</p>
         <Button
-          className="bg-blue-1 text-white"
+          className="bg-blue-500 text-white"
           onClick={() => router.push("/products/new")}
         >
           <Plus className="h-4 w-4 mr-2" />
           Create Product
         </Button>
       </div>
-      <Separator className="bg-grey-1 my-4" />
+      <Separator className="bg-gray-500 my-4" />
       <DataTable columns={columns} data={products} searchKey="title" />
     </div>
   );

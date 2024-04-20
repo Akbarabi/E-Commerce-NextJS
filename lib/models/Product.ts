@@ -1,17 +1,18 @@
 import mongoose from "mongoose";
 
-const productSchema = new mongoose.Schema({
-    title : String,
-    description : String,
-    media : [String],
-    category : String,
-    collections : {type : mongoose.Schema.Types.Array, ref : "Collection"},
-    qty : {type : mongoose.Schema.Types.Number, get: (v : mongoose.Schema.Types.Number) => parseInt(v.toString())},
-    tags : [String],
-    price : {type : mongoose.Schema.Types.Decimal128, get: (v : mongoose.Schema.Types.Decimal128) => parseFloat(v.toString())},
-    createdAt : Date,
-    updatedAt : Date
-})
-const Product =mongoose.models.Product || mongoose.model("Product", productSchema);
+const ProductSchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  media: [String],
+  category: String,
+  collections: [{ type: mongoose.Schema.Types.Array, ref: "Collection" }],
+  tags: [String],
+  price: { type: mongoose.Schema.Types.Decimal128, get: (v: mongoose.Schema.Types.Decimal128) => { return parseFloat(v.toString()) }},
+  qty: Number,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+}, { toJSON: { getters: true } });
+
+const Product = mongoose.models.Product || mongoose.model("Product", ProductSchema);
 
 export default Product;

@@ -24,16 +24,17 @@ import Delete from "../custom ui/Delete";
 import MultiText from "../custom ui/MultiText";
 import MultiSelect from "../custom ui/MultiSelect";
 import Loader from "../custom ui/Loader";
+import axios from "axios";
 
 const formSchema = z.object({
-  title: z.string().min(2).max(20),
+  title: z.string().min(2).max(25),
   description: z.string().min(2).max(500).trim(),
   media: z.array(z.string()),
   category: z.string(),
   collections: z.array(z.string()),
   tags: z.array(z.string()),
   price: z.coerce.number().min(0.1),
-  qty: z.coerce.number().min(0.1),
+  qty: z.coerce.number().min(1),
 });
 
 interface ProductFormProps {
@@ -48,10 +49,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
 
   const getCollections = async () => {
     try {
-      const res = await fetch("/api/collections", {
-        method: "GET",
-      });
-      const data = await res.json();
+      const res = await axios.get("/api/collections");
+      const data = await res.data;
       setCollections(data);
       setLoading(false);
     } catch (err) {
@@ -101,11 +100,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
       const url = initialData
         ? `/api/products/${initialData._id}`
         : "/api/products";
-      const res = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify(values),
-      });
-      if (res.ok) {
+      const res = await axios.post(url, values)
+      if (res.status === 200) {
         setLoading(false);
         toast.success(`Product ${initialData ? "updated" : "created"}`);
         window.location.href = "/products";
